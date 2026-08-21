@@ -1,0 +1,69 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <url>http://maven.apache.org</url>
+
+  <!-- package -->
+  <groupId>tool.cmnclslib</groupId>
+
+  <!-- アプリ名 -->
+  <artifactId>CmnClsLib</artifactId>
+  <name>CmnClsLib</name>
+
+  <!-- バージョン -->
+  <version>1.0</version>
+
+  <!-- パッケージファイル形式 -->
+  <packaging>jar</packaging>
+
+  <properties>
+    <!-- ソースファイルの文字コード -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- カスタム変数 -->
+    <jvmver>11</jvmver>
+    <jrever>jre11</jrever>
+    <!-- JAVAバージョン -->
+    <java.version>${jvmver}</java.version>
+    <!-- maven.compiler.release：JDK9から指定可 -->
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+  </properties>
+
+  <!-- パッケージ化の設定 -->
+  <build>
+    <finalName>${project.artifactId}-${project.version}-${jrever}</finalName>
+    <plugins>
+      <!-- マニフェスト設定 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.2</version>
+      </plugin>
+      <!-- テスト実行設定 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/Test*.java</include>
+            <include>**/UnitTest_*.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- 依存ライブラリ -->
+  <dependencies>
+
+    <!-- 単体テスト -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+</project>
