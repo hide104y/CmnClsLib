@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CmnClsLib/CmnClsLib.csproj" />
+  <Project Path="TestProject1/TestProject1.csproj" Id="69d5bdf1-e6f3-49df-8118-eb38411e6510" />
+</Solution>
