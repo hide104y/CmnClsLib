@@ -24,7 +24,7 @@ gh repo list | Select-String CmnClsLib
 # CD
 cd D:\Github\Projects
 # フォルダが存在する場合は削除
-if (Test-Path -Path .\CmnClsLib){rmdir .\CmnClsLib}
+if (Test-Path -Path .\CmnClsLib){rm -Recurse -Force .\CmnClsLib}
 # クローン実行
 git clone https://github.com/hide104y/CmnClsLib.git
 ```
@@ -147,7 +147,7 @@ dotnet publish .\CmnClsLib\CmnClsLib\CmnClsLib.csproj -c Release -o D:\Github\bi
 # CD
 cd D:\Github\Projects
 # フォルダが存在する場合は削除
-if (Test-Path -Path .\CmnClsLib){rmdir .\CmnClsLib}
+if (Test-Path -Path .\CmnClsLib){rm -Recurse -Force .\CmnClsLib}
 # クローン実行
 git clone -b dotnet10 https://github.com/hide104y/CmnClsLib.git
 ```
