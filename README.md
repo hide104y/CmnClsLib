@@ -24,7 +24,7 @@ gh repo list | Select-String CmnClsLib
 # CD
 cd D:\Github\workspace.jre11
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\CmnClsLib)){rmdir .\CmnClsLib}
+if (Test-Path -Path .\CmnClsLib){rm -Recurse -Force .\CmnClsLib}
 # クローン実行
 git clone https://github.com/hide104y/CmnClsLib.git
 ```
@@ -180,7 +180,7 @@ git push -u origin java11
 # CD
 cd D:\Github\workspace.jre11
 # フォルダが存在する場合は削除
-if (-Not (Test-Path -Path .\CmnClsLib)){rmdir .\CmnClsLib}
+if (Test-Path -Path .\CmnClsLib){rm -Recurse -Force .\CmnClsLib}
 # クローン実行
 git clone -b java11 https://github.com/hide104y/CmnClsLib.git
 ```
