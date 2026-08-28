@@ -5,6 +5,13 @@
 1. Github CLIがインストールされていない場合はインストール：winget install -e --id GitHub.cli
 1. Powershellプロンプトを開く
 
+## 変数設定
+```shell
+$base_dir = "D:\Github\Projects"
+$branch = "dotnet10"
+$solution = "CmnClsLib"
+```
+
 ## リポジトリ作成（未作成の場合）
 ```shell
 # サインイン状態の確認
@@ -13,28 +20,32 @@ gh auth status
 gh auth login
 # 削除権限付与
 gh auth refresh -h github.com -s delete_repo
-# 作成
-gh repo create CmnClsLib --private
+# リポジトリの削除
+gh repo delete hide104y/${solution} --yes
+# リポジトリの作成
+gh repo create ${solution} --private
 # 確認
-gh repo list | Select-String CmnClsLib
+gh repo list | Select-String ${solution}
 ```
 
 ## リモートリポジトリ（mainブランチ）の取得
 ```shell
 # CD
-cd D:\Github\Projects
+cd ${base_dir}
 # フォルダが存在する場合は削除
-if (Test-Path -Path .\CmnClsLib){rm -Recurse -Force .\CmnClsLib}
+if (Test-Path -Path ".\${solution}"){rmdir ".\${solution}"}
 # クローン実行
-git clone https://github.com/hide104y/CmnClsLib.git
+git clone https://github.com/hide104y/${solution}.git
 ```
 
 ## リモートリポジトリ（mainブランチ）にREADME.mdが存在しない場合
 ```shell
 # CD
-cd D:\Github\Projects\CmnClsLib
+cd ${base_dir}\${solution}
 # ファイル作成
-ruby -e "File.write('README.md', '# CmnClsLib', encoding: 'UTF-8')"
+$enc = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText("${base_dir}\${solution}\README.md", "# ${solution}", $enc)
+cat "${base_dir}\${solution}\README.md"
 # コミット
 git add README.md
 git commit -m "add README.md"
@@ -49,16 +60,16 @@ git branch -a
 # ブランチをmainに切り替え・復元
 git checkout main
 # ブランチ作成
-git checkout -b dotnet10
+git checkout -b ${branch}
 # 作成したブランチをリモートにプッシュ
-git push -u origin dotnet10
+git push -u origin ${branch}
 ```
 
 ## プロジェクトの作成
 ```shell
 # クラスライブラリ：.net 10.0
-cd D:\Github\Projects\CmnClsLib
-dotnet new classlib --framework net10.0 -o CmnClsLib
+cd ${base_dir}\${solution}
+dotnet new classlib --framework net10.0 -o ${solution}
 ```
 
 ## ソリューションファイルの作成
@@ -105,18 +116,17 @@ dotnet new classlib --framework net10.0 -o CmnClsLib
 ## AIレビュー
 ```shell
 # CD
-cd D:\Github\Projects
+cd ${base_dir}
 agy
-.\CmnClsLib\CmnClsLib\Class\ClsCmdExec.csに対して、スキル「source-review」を実行して
 /clear
-.\CmnClsLib\CmnClsLib\Module\MdlUtil.csに対して、スキル「source-review」を実行して
+「.\CmnClsLib\CmnClsLib」配下のソースに対して、スキル「source-review」を実行して
 /exit
 ```
 
 ## ビルド
 ```shell
 # CD
-cd D:\Github\Projects
+cd ${base_dir}
 # ビルド
 dotnet build .\CmnClsLib\CmnClsLib.slnx -c Release -p:InvariantGlobalization=false
 dotnet build .\CmnClsLib\TestProject1\TestProject1.csproj
@@ -126,15 +136,28 @@ dotnet test .\CmnClsLib\TestProject1\TestProject1.csproj
 
 ## リポジトリにコミット
 ```shell
-cd D:\Github\Projects\CmnClsLib
-git switch dotnet10
+# CD
+cd ${base_dir}\${solution}
+# ブランチ切り替え
+git switch ${branch}
+# 修正ファイルの追加
 git add .
-git commit -m "README.mdの修正"
-git push -u origin dotnet10
+git ls-files
+# コミット
+git commit -m "★修正コメントを記載★"
+# 状態確認
+git status
+# リモートの変更を取得し、ローカルのコミットをその上に再配置
+# git pull --rebase origin ${branch}
+# リモートプッシュ
+git push -u origin ${branch}
+# chromeでリモートブランチへ接続
+Invoke-Expression "C:\Progra~1\Google\Chrome\Application\chrome.exe https://github.com/hide104y/${solution}/tree/${branch}"
 ```
 
 ## デプロイ
 ```shell
+cd ${base_dir}
 dotnet publish .\CmnClsLib\CmnClsLib\CmnClsLib.csproj -c Release -o D:\Github\bin.n10 -r win-x64 --self-contained=false -p:PublishSingleFile=false -p:PublishReadyToRun=false -p:PublishTrimmed=false -p:PublishAot=false -p:InvariantGlobalization=false
 ```
 
@@ -142,14 +165,14 @@ dotnet publish .\CmnClsLib\CmnClsLib\CmnClsLib.csproj -c Release -o D:\Github\bi
 - https://github.com/hide104y/CmnClsLib/tree/dotnet10
 <br>※GitHubの画面で「Compare & pull request」が表示されるが放置
 
-## リモートリポジトリ（dotnet10ブランチ）の取得
+## リモートリポジトリ（指定ブランチ）の取得
 ```shell
 # CD
-cd D:\Github\Projects
+cd ${base_dir}
 # フォルダが存在する場合は削除
-if (Test-Path -Path .\CmnClsLib){rm -Recurse -Force .\CmnClsLib}
+if (Test-Path -Path ".\${solution}"){rmdir ".\${solution}"}
 # クローン実行
-git clone -b dotnet10 https://github.com/hide104y/CmnClsLib.git
+git clone -b ${branch} https://github.com/hide104y/${solution}.git
 ```
 
 ## License
