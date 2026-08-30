@@ -105,15 +105,13 @@ public class UnitTest_MdlApp {
     public void getAppNameWithHostName_アプリ名と小文字のホスト名を結合した文字列を返すこと() {
         String actual = MdlApp.getAppNameWithHostName();
         String expectedAppName = MdlApp.getAppName();
-        String host = System.getenv("COMPUTERNAME");
-        if (host == null || host.isEmpty()) {
-            try {
-                host = java.net.InetAddress.getLocalHost().getHostName();
-            } catch (Exception e) {
-                host = "unknown";
-            }
+        String host = "";
+        try {
+            host = java.net.InetAddress.getLocalHost().getHostName().toLowerCase(java.util.Locale.ROOT);
+        } catch (Exception e) {
+            host = "localhost";
         }
-        assertEquals(expectedAppName + "_" + host.toLowerCase(), actual);
+        assertEquals(expectedAppName + "_" + host, actual);
     }
 
     @Test

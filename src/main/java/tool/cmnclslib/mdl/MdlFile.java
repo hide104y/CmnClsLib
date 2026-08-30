@@ -226,15 +226,23 @@ public final class MdlFile {
         if (path == null || path.isEmpty()) {
             return path;
         }
-        String normalized = path.replace('/', '\\');
-        while (normalized.length() > 1 && (normalized.endsWith("\\") || normalized.endsWith("/"))) {
-            // "C:\" などのルートドライブ末尾は残す考慮
-            if (normalized.length() == 3 && normalized.charAt(1) == ':') {
-                break;
+        if (MdlApp.isWindows()) {
+            String normalized = path.replace('/', '\\');
+            while (normalized.length() > 1 && (normalized.endsWith("\\") || normalized.endsWith("/"))) {
+                // "C:\" などのルートドライブ末尾は残す考慮
+                if (normalized.length() == 3 && normalized.charAt(1) == ':') {
+                    break;
+                }
+                normalized = normalized.substring(0, normalized.length() - 1);
             }
-            normalized = normalized.substring(0, normalized.length() - 1);
+            return normalized;
+        } else {
+            String normalized = path;
+            while (normalized.length() > 1 && normalized.endsWith("/")) {
+                normalized = normalized.substring(0, normalized.length() - 1);
+            }
+            return normalized;
         }
-        return normalized;
     }
 
     /**
@@ -469,10 +477,23 @@ public final class MdlFile {
                 .replace("_BASENAME_", baseName);
         // 環境変数
         String userDomain = System.getenv("USERDOMAIN") != null ? System.getenv("USERDOMAIN") : "";
-        String computerName = System.getenv("COMPUTERNAME") != null ? System.getenv("COMPUTERNAME") : "";
+        String computerName = System.getenv("COMPUTERNAME");
+        if (computerName == null || computerName.isEmpty()) {
+            computerName = System.getenv("HOSTNAME");
+        }
+        if (computerName == null || computerName.isEmpty()) {
+            computerName = System.getenv("HOST");
+        }
+        if (computerName == null || computerName.isEmpty()) {
+            try {
+                computerName = java.net.InetAddress.getLocalHost().getHostName();
+            } catch (Exception e) {
+                computerName = "localhost";
+            }
+        }
         String userName = System.getProperty("user.name", "");
         tempPath = tempPath.replace("_USERDOMAIN_", userDomain)
-                .replace("_COMPUTERNAME_", computerName)
+                .replace("_COMPUTERNAME_", computerName != null ? computerName : "")
                 .replace("_USERNAME_", userName);
         // その他
         tempPath = tempPath.replace("%%", "%");
@@ -853,7 +874,7 @@ public final class MdlFile {
         if (filePath == null || filePath.isEmpty()) {
             return;
         }
-        Charset enc = encoding != null ? encoding : Charset.forName("MS932");
+        Charset enc = encoding != null ? encoding : StandardCharsets.UTF_8;
         java.nio.file.Path path = java.nio.file.Paths.get(filePath);
         java.nio.file.Path parent = path.getParent();
         if (parent != null && !java.nio.file.Files.exists(parent)) {
@@ -883,7 +904,7 @@ public final class MdlFile {
         if (filePath == null || filePath.isEmpty()) {
             return;
         }
-        Charset enc = encoding != null ? encoding : Charset.forName("MS932");
+        Charset enc = encoding != null ? encoding : StandardCharsets.UTF_8;
         java.nio.file.Path path = java.nio.file.Paths.get(filePath);
         java.nio.file.Path parent = path.getParent();
         if (parent != null && !java.nio.file.Files.exists(parent)) {
@@ -912,7 +933,7 @@ public final class MdlFile {
      * @param message 書き込むメッセージ文字列
      */
     public static void writeFile(String filePath, String message) {
-        writeFile(filePath, message, true, Charset.forName("MS932"));
+        writeFile(filePath, message, true, StandardCharsets.UTF_8);
     }
 
     /**

@@ -239,7 +239,11 @@ public final class MdlApp {
         } catch (Exception e) {
             // 取得失敗時
         }
-        return System.getProperty("java.home", "") + "\\bin\\java.exe";
+        String javaHome = System.getProperty("java.home", "");
+        if (isWindows()) {
+            return javaHome + "\\bin\\java.exe";
+        }
+        return javaHome + "/bin/java";
     }
 
     /**

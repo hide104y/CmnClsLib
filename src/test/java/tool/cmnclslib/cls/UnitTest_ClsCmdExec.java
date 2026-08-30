@@ -2,6 +2,7 @@ package tool.cmnclslib.cls;
 
 import org.junit.Before;
 import org.junit.Test;
+import tool.cmnclslib.mdl.MdlApp;
 import static org.junit.Assert.*;
 
 /**
@@ -18,24 +19,29 @@ public class UnitTest_ClsCmdExec {
     }
 
     @Test
-    public void execute_ipconfigが正常終了すること() {
-        String comSpec = System.getenv("ComSpec");
-        if (comSpec == null || comSpec.isEmpty()) {
-            comSpec = "cmd.exe";
+    public void execute_標準コマンドが正常終了すること() {
+        if (MdlApp.isWindows()) {
+            String comSpec = System.getenv("ComSpec");
+            cmdExec.setCmdPath(comSpec != null && !comSpec.isEmpty() ? comSpec : "cmd.exe");
+            cmdExec.setCmdArgs("/c echo test");
+        } else {
+            cmdExec.setCmdPath("sh");
+            cmdExec.setCmdArgs("-c echo test");
         }
-        cmdExec.setCmdPath(comSpec);
-        cmdExec.setCmdArgs("/c ipconfig /all");
         assertEquals(0, cmdExec.executeThread(3));
     }
 
     @Test
     public void execute_存在しないコマンドを実行した場合異常終了すること() {
-        String comSpec = System.getenv("ComSpec");
-        if (comSpec == null || comSpec.isEmpty()) {
-            comSpec = "cmd.exe";
+        if (MdlApp.isWindows()) {
+            String comSpec = System.getenv("ComSpec");
+            cmdExec.setCmdPath(comSpec != null && !comSpec.isEmpty() ? comSpec : "cmd.exe");
+            cmdExec.setCmdArgs("/c non_existent_command_xyz_12345");
+            assertNotEquals(0, cmdExec.executeThread(3));
+        } else {
+            cmdExec.setCmdPath("sh");
+            cmdExec.setCmdArgs("-c non_existent_command_xyz_12345");
+            assertNotEquals(0, cmdExec.executeThread(3));
         }
-        cmdExec.setCmdPath(comSpec);
-        cmdExec.setCmdArgs("/c ifconfig /all");
-        assertEquals(1, cmdExec.executeThread(3));
     }
 }

@@ -1150,7 +1150,7 @@ public class ClsCmmnArgs {
                 if (!tempStr.isEmpty()) {
                     logger.setValueByKey(ClsLogger.IS_FILE, "true");
                     logger.setValueByKey(ClsLogger.DIR, tempStr);
-                    logger.setValueByKey(ClsLogger.PATH, tempStr + "\\" + exeBaseName + "." + MdlDate.getFormattedDate("yyyyMMdd.HHmmss") + "." + pid + ".log");
+                    logger.setValueByKey(ClsLogger.PATH, MdlFile.combinePath(tempStr, exeBaseName + "." + MdlDate.getFormattedDate("yyyyMMdd.HHmmss") + "." + pid + ".log"));
                     break;
                 }
             }
@@ -1289,7 +1289,7 @@ public class ClsCmmnArgs {
                     if (key.equals(argKeyOfUserConf)) {
                         authDefFilePath = confVal;
                     } else if (key.equals(argKeyOfUserConf + "name")) {
-                        authDefFilePath = MdlConst.CONF_BASE + "\\passwd\\" + confVal + "." + replaceEnvIdKey + ".yml";
+                        authDefFilePath = MdlFile.combinePath(MdlFile.combinePath(MdlConst.CONF_BASE, "passwd"), confVal + "." + replaceEnvIdKey + ".yml");
                     }
                     isOk = readUserDefFile(confVal);
                     break;
@@ -1736,7 +1736,7 @@ public class ClsCmmnArgs {
         String rawPath = namedArgs.getOrDefault(key, "");
         String result = MdlFile.trimPathSeparator(MdlFile.getAbsolutePath(rawPath));
         if (MdlFile.getDirectoryPath(result).isEmpty()) {
-            result = result + "\\.";
+            result = MdlFile.combinePath(result, ".");
         }
         result = replaceByMap(result);
 

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import tool.cmnclslib.ifc.ICmnLogger;
+import tool.cmnclslib.mdl.MdlApp;
 import tool.cmnclslib.mdl.MdlConst;
 import tool.cmnclslib.mdl.MdlFile;
 import tool.cmnclslib.mdl.MdlUtil;
@@ -1123,7 +1124,7 @@ public class ClsCmdExec {
     public int executeThread(Object priority) {
         String methodName = "[ClsCmdExec.doThread()][" + prefix + "]";
         if (encoding == null || encoding.isEmpty()) {
-            encoding = "Shift_JIS";
+            encoding = MdlApp.isWindows() ? "Shift_JIS" : "UTF-8";
         }
         cmdExitStatus = -1;
         cmdStatus.setMethodExitStatus(cmdStatus.getErrorCode() == MdlConst.INT_NULL ? MdlConst.LVL_E : cmdStatus.getErrorCode());
@@ -1245,7 +1246,7 @@ public class ClsCmdExec {
                     String value = entry.getValue();
                     if ("+PATH".equalsIgnoreCase(key)) {
                         String currentPath = env.get("PATH");
-                        String newPath = value + ";" + (currentPath != null ? currentPath : "");
+                        String newPath = value + File.pathSeparator + (currentPath != null ? currentPath : "");
                         if (isShowEnvMap && logger != null) {
                             logger.writeLine(debugLevel, "[SETENV] PATH = " + newPath);
                         }

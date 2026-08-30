@@ -164,9 +164,14 @@ public class UnitTest_MdlFile {
 
     @Test
     public void removeTrailingPathSeparator_引数の文字列の最後に円マークが指定された場合は除去して返却すること() {
-        String target = "C:\\DIR1\\DIR2\\";
-        String expected = "C:\\DIR1\\DIR2";
-        assertEquals(expected, MdlFile.removeTrailingPathSeparator(target));
+        if (MdlApp.isWindows()) {
+            String target = "C:\\DIR1\\DIR2\\";
+            String expected = "C:\\DIR1\\DIR2";
+            assertEquals(expected, MdlFile.removeTrailingPathSeparator(target));
+        }
+        String targetSlash = "/dir1/dir2/";
+        String expectedSlash = MdlApp.isWindows() ? "\\dir1\\dir2" : "/dir1/dir2";
+        assertEquals(expectedSlash, MdlFile.removeTrailingPathSeparator(targetSlash));
     }
 
     @Test
